@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Configuration;
+using System.Web.Mvc;
 using MvcIntegrationTestFramework.Browsing;
 using MvcIntegrationTestFramework.Hosting;
 using NUnit.Framework;
@@ -15,7 +16,7 @@ namespace MyMvcApplication.Tests
 		{
             //If you MVC project is not in the root of your solution directory then include the path
             //e.g. AppHost.Simulate("Website\MyMvcApplication")
-			appHost = AppHost.Simulate("MyMvcApplication");
+			appHost = AppHost.Simulate("MyMvcApplication", ConfigurationManager.AppSettings);
 		}
 
 		[Test]
@@ -90,5 +91,17 @@ namespace MyMvcApplication.Tests
 				Assert.AreEqual("Hello, you're logged in as steve", afterLoginResult.ResponseText);
 			});
 		}
+
+        [Test]
+        public void Proof_Of_Config_Change()
+        {
+            appHost.Start(browsingSession =>
+            {
+                RequestResult result = browsingSession.Get("");
+
+                var viewResult = (ViewResult)result.ActionExecutedContext.Result;
+                Assert.AreEqual("My New Message", viewResult.ViewData["CustomMessage"]);
+            });
+        }
 	}
 }

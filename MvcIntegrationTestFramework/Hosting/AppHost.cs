@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Hosting;
@@ -17,15 +21,18 @@ namespace MvcIntegrationTestFramework.Hosting
     {
         private readonly AppDomainProxy _appDomainProxy; // The gateway to the ASP.NET-enabled .NET appdomain
 
+        private static NameValueCollection _appSettings;
+
         private AppHost(string appPhysicalDirectory, string virtualDirectory = "/")
         {
             _appDomainProxy = (AppDomainProxy)ApplicationHost.CreateApplicationHost(typeof(AppDomainProxy), virtualDirectory, appPhysicalDirectory);
-            _appDomainProxy.RunCodeInAppDomain(() =>
+            _appDomainProxy.RunCodeInAppDomain((appSettings) =>
             {
+                OverrideAppSettings(appSettings);
                 InitializeApplication();
                 FilterProviders.Providers.Add(new InterceptionFilterProvider());
                 LastRequestData.Reset();
-            });
+            }, NameValueCollectionConversions.ConvertFromNameValueCollection(_appSettings));
         }
 
         public void Start(Action<BrowsingSession> testScript)
@@ -38,6 +45,7 @@ namespace MvcIntegrationTestFramework.Hosting
         private static void InitializeApplication()
         {
             var appInstance = GetApplicationInstance();
+
             appInstance.PostRequestHandlerExecute += delegate
             {
                 // Collect references to context objects that would otherwise be lost
@@ -51,6 +59,24 @@ namespace MvcIntegrationTestFramework.Hosting
 
             RecycleApplicationInstance(appInstance);
         }
+
+        private static void OverrideAppSettings(Dictionary<string,string> appSettings)
+        {
+            if (appSettings == null)
+                return;
+
+            foreach (var originalKey in ConfigurationManager.AppSettings.AllKeys)
+            {
+                var key = originalKey;
+
+                foreach (var newKey in appSettings.Keys)
+                {
+                    if (newKey == originalKey)
+                        ConfigurationManager.AppSettings[originalKey] = appSettings[newKey];
+                }
+            }
+        }
+
         #endregion
 
         #region Reflection hacks
@@ -101,6 +127,19 @@ namespace MvcIntegrationTestFramework.Hosting
             }
             CopyDllFiles(mvcProjectPath);
             return new AppHost(mvcProjectPath);
+        }
+
+        public static AppHost Simulate(string mvcProjectDirectory, NameValueCollection appSettings)
+        {
+            _appSettings = appSettings;
+
+            var mvcProjectPath = GetMvcProjectPath(mvcProjectDirectory);
+            if (mvcProjectPath == null)
+            {
+                throw new ArgumentException(string.Format("Mvc Project {0} not found", mvcProjectDirectory));
+            }
+            CopyDllFiles(mvcProjectPath);
+            return new AppHost(mvcProjectPath, "/");
         }
 
         private static void CopyDllFiles(string mvcProjectPath)

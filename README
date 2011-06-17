@@ -1,5 +1,3 @@
-Updated for MVC3
+Added the ability to add a configuration file to the integration test assembly.
 
-I have made a few alterations from the original so it should just work out of the box, no need for post build steps.
-
-The example HomeControllerTests should explain everything
+The application settings will override any matching application settings in the Web.config of the main ASP.NET MVC website that is being tested.

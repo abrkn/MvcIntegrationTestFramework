@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System.Configuration;
+using System.Web;
 using System.Web.Mvc;
 
 namespace MyMvcApplication.Controllers
@@ -8,6 +9,7 @@ namespace MyMvcApplication.Controllers
         public ActionResult Index()
         {
             ViewBag.Message = "Welcome to ASP.NET MVC!";
+            ViewBag.CustomMessage = ConfigurationManager.AppSettings["TestMessage"];
 
             return View();
         }

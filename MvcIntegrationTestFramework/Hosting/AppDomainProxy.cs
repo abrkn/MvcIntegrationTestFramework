@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using MvcIntegrationTestFramework.Browsing;
 
 namespace MvcIntegrationTestFramework.Hosting
@@ -8,9 +10,9 @@ namespace MvcIntegrationTestFramework.Hosting
     /// </summary>
     internal class AppDomainProxy : MarshalByRefObject
     {
-        public void RunCodeInAppDomain(Action codeToRun)
+        public void RunCodeInAppDomain(Action<Dictionary<string, string>> codeToRun, Dictionary<string, string> appSettings)
         {
-            codeToRun();
+            codeToRun(appSettings);
         }
 
         public void RunBrowsingSessionInAppDomain(SerializableDelegate<Action<BrowsingSession>> script)

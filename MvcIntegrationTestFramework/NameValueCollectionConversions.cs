@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Web.Routing;
 
 namespace MvcIntegrationTestFramework
@@ -33,6 +35,14 @@ namespace MvcIntegrationTestFramework
 
             }
             return nvc;
+        }
+
+        public static Dictionary<string, string> ConvertFromNameValueCollection(NameValueCollection nvc)
+        {
+            if (nvc == null)
+                return null;
+
+            return nvc.AllKeys.ToDictionary(key => key, key => nvc[key]);
         }
     }
 }
