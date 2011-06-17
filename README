@@ -1,3 +1,5 @@
 Added the ability to add a configuration file to the integration test assembly.
 
 The application settings will override any matching application settings in the Web.config of the main ASP.NET MVC website that is being tested.
+
+An example use for this would be changing the connection string to work with a test data source.
