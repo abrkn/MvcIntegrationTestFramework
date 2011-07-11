@@ -49,6 +49,14 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Properties\MvcIntegrationTestFramework.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -75,18 +83,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Browsing\MvcUtils.cs" />
-    <Compile Include="Browsing\SimulatedWorkerRequest.cs" />
-    <Compile Include="Hosting\AppDomainProxy.cs" />
-    <Compile Include="Interception\InterceptionFilterProvider.cs" />
-    <Compile Include="Hosting\SerializableDelegate.cs" />
-    <Compile Include="Interception\InterceptionFilter.cs" />
-    <Compile Include="Interception\LastRequestData.cs" />
-    <Compile Include="Browsing\BrowsingSession.cs" />
-    <Compile Include="Hosting\AppHost.cs" />
+    <Compile Include="MvcUtils.cs" />
+    <Compile Include="SimulatedWorkerRequest.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="AppDomainProxy.cs" />
+    <Compile Include="InterceptionFilterProvider.cs" />
+    <Compile Include="SerializableDelegate.cs" />
+    <Compile Include="InterceptionFilter.cs" />
+    <Compile Include="LastRequestData.cs" />
+    <Compile Include="BrowsingSession.cs" />
+    <Compile Include="AppHost.cs" />
+    <Compile Include="MockInjectionFilterProvider.cs" />
     <Compile Include="NameValueCollectionConversions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Browsing\RequestResult.cs" />
+    <Compile Include="RequestResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -104,6 +114,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\MvcIntegrationTestFramework.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
